@@ -1,7 +1,10 @@
 from CPU import CPU
 
 def main():
-    instructionMemory = [ "instruction1", "instruction2" ]
+    instructionMemory = [
+        [ "add", "r1", "r2", "r3" ],
+    ]
+
     cpu = CPU( instructionMemory )
     cpu.cycle()
 

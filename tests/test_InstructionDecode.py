@@ -1,4 +1,4 @@
-from InstructionDecode import InstructionDecode
+from src.InstructionDecode import InstructionDecode
 
 import unittest
 

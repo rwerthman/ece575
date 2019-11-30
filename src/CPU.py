@@ -1,8 +1,8 @@
-from InstructionDecode import InstructionDecode
-from InstructionFetch import InstructionFetch
-from Execution import Execution
-from MemoryAccess import MemoryAccess
-from WriteBack import WriteBack
+from .InstructionDecode import InstructionDecode
+from .InstructionFetch import InstructionFetch
+from .Execution import Execution
+from .MemoryAccess import MemoryAccess
+from .WriteBack import WriteBack
 
 class CPU( object ):
 

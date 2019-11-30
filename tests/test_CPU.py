@@ -1,4 +1,4 @@
-from CPU import CPU
+from src.CPU import CPU
 
 import unittest
 

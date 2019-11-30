@@ -1,4 +1,4 @@
-from MemoryAccess import MemoryAccess
+from src.MemoryAccess import MemoryAccess
 
 import unittest
 

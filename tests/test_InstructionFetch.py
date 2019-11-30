@@ -1,4 +1,4 @@
-from InstructionFetch import InstructionFetch
+from src.InstructionFetch import InstructionFetch
 
 import unittest
 

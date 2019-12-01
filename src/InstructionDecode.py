@@ -1,43 +1,41 @@
 class InstructionDecode( object ):
 
-    def __init__( self ):
-        # Control signal for the register file
-        self.mRegWrite = False
+    def __init__( self, controlUnit, instructionFetch ):
 
-        self.mRegisterFile = {
+        self.IF = instructionFetch
+
+        self.controlUnit = controlUnit
+
+        self.registerFile = {
             "r1" : 1,
             "r2" : 2,
             "r3" : 0
         }
 
-        self.mReadRegister1 = None
-        self.mReadRegister2 = None
-        self.mWriteRegister = None
-        self.mWriteData = None
+        self.readRegister1 = None
+        self.readRegister2 = None
+        self.writeRegister = None
+        self.writeData = None
 
-        self.mSupportedInstrutions = {
+        self.supportedInstrutions = {
             "add" : "rtype"
         }
-
-        self.currentOpCode = None
     
-    def getInstructionType( self, instruction ):
-        self.currentOpCode = instruction[0]
-        return self.mSupportedInstrutions[self.currentOpCode]
+    def execute( self ):
+        
+        # Determine which control unit signals need to be asserted
+        # based on the instruction operation
+        self.controlUnit.setControlSignals( self.IF.instruction[0] )
 
-    
-    def execute( self, instruction ):
-        instructionType = self.getInstructionType( instruction )
+        instructionType = self.supportedInstrutions[self.IF.instruction[0]]
 
         if instructionType == 'rtype':
-            self.mReadRegister1 = instruction[1] # rs
-            self.mReadRegister2 = instruction[2] # rt
-            self.mWriteRegister = instruction[3] # rd
-            self.mRegWrite = True
+            self.readRegister1 = self.IF.instruction[1] # rs
+            self.readRegister2 = self.IF.instruction[2] # rt
+            self.writeRegister = self.IF.instruction[3] # rd
 
-    def readRegister( self, register ):
-        return self.mRegisterFile[register]
+    def readFromRegister( self, register ):
+        return self.registerFile[register]
 
-    def writeRegister( self, register, data ):
-        if self.mRegWrite:
-            self.mRegisterFile[register] = data
+    def writeToRegister( self, data ):
+        self.registerFile[self.writeRegister] = data

@@ -15,8 +15,8 @@ class InstructionFetchTestCase( unittest.TestCase ):
 
         IF.execute()
 
-        self.assertEqual( IF.mInstruction, [ "instruction1" ] )
-        self.assertEqual( IF.mPC, 1 )
+        self.assertEqual( IF.instruction, [ "instruction1" ] )
+        self.assertEqual( IF.PC, 1 )
 
 if __name__ == '__main__':  
     unittest.main()

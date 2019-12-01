@@ -1,21 +1,15 @@
 class Execution( object ):
 
-    def __init__( self ):
-        self.mALUOp = 0
-        self.mALUDate1 = None
-        self.mALUDate2 = None
-        self.mALUResult = None
-    
-    def execute( self, aOpCode, aALUData1, aALUData2 ):
+    def __init__( self, controlUnit, instructionDecode ):
+        self.controlUnit = controlUnit
+        self.ID = instructionDecode
 
-        self.mALUOp = self.getALUOp( aOpCode )
+        self.ALUResult = None
+    
+    def execute( self ):
 
         # Add
-        if self.mALUOp == 0:
-            self.mALUResult = aALUData1 + aALUData2
-    
-    def getALUOp( self, aOpCode ):
-        if aOpCode == "add":
-            return 0
+        if self.controlUnit.ALUOp == 0:
+            self.ALUResult = self.ID.readFromRegister( self.ID.readRegister1 ) + self.ID.readFromRegister( self.ID.readRegister2 )
 
 

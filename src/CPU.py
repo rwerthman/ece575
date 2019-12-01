@@ -1,3 +1,4 @@
+from .ControlUnit import ControlUnit
 from .InstructionDecode import InstructionDecode
 from .InstructionFetch import InstructionFetch
 from .Execution import Execution
@@ -6,27 +7,20 @@ from .WriteBack import WriteBack
 
 class CPU( object ):
 
-    def __init__( self, aInstructionMemory ):
-        self.mInstructionMemory = aInstructionMemory
-        self.IF = InstructionFetch( self.mInstructionMemory )
-        self.ID = InstructionDecode()
-        self.Execution = Execution()
-        self.MemoryAccess = MemoryAccess()
-        self.WriteBack = WriteBack( self.ID )
+    def __init__( self, instructionMemory ):
+        self.controlUnit = ControlUnit()
+        self.instructionMemory = instructionMemory
+        self.IF = InstructionFetch( self.instructionMemory )
+        self.ID = InstructionDecode( self.controlUnit, self.IF )
+        self.EX = Execution( self.controlUnit, self.ID )
+        self.MEM = MemoryAccess( self.controlUnit, self.ID, self.EX )
+        self.WB = WriteBack( self.controlUnit, self.ID, self.EX, self.MEM )
 
     def cycle( self ):
-        for _ in self.mInstructionMemory:
+        for _ in self.instructionMemory:
             self.IF.execute()
-
-            self.ID.execute( self.IF.mInstruction )
-
-            self.Execution.execute(
-                self.ID.currentOpCode,
-                self.ID.readRegister( self.ID.mReadRegister1 ),
-                self.ID.readRegister( self.ID.mReadRegister2)
-            )
-
-            self.MemoryAccess.execute( self.Execution.mALUResult )
-
-            self.WriteBack.execute( self.MemoryAccess.mALUResult, self.MemoryAccess.mReadData )
+            self.ID.execute()
+            self.EX.execute()
+            self.MEM.execute()
+            self.WB.execute()
     

@@ -1,19 +1,16 @@
 class MemoryAccess( object ):
 
-    def __init__( self ):
-        self.mMemWrite = False
-        self.mMemRead = False
-        self.mDataMemory = [0, 0, 0, 0]
-        self.mALUResult = None
-        self.mReadData = None
+    def __init__( self, controlUnit, instructionDecode, execution ):
+        self.controlUnit = controlUnit
+        self.ID = instructionDecode
+        self.EX = execution
+
+        self.dataMemory = [1, 2, 3, 4]
+        self.readData = None
     
-    def execute( self, aALUResult):
-        self.mALUResult = aALUResult
-    
-    def ReadMemory( self, address ):
-        # if self.MemRead:
-        pass
-    
-    def WriteMemory( self, address, data ):
-        # if self.MemWrite:
-        pass
+    def execute( self ):
+
+        if self.controlUnit.MemRead:
+            self.readData = self.dataMemory[self.EX.ALUResult]
+        elif self.controlUnit.MemWrite:
+            self.dataMemory[self.EX.ALUResult] = self.ID.readFromRegister( self.ID.readRegister2 )

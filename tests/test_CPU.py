@@ -12,7 +12,7 @@ class CPUTestCase( unittest.TestCase ):
         cpu = CPU( instructionMemory )
         cpu.cycle()
         
-        self.assertEqual( cpu.ID.readRegister( "r3" ), 3 )
+        self.assertEqual( cpu.ID.readFromRegister( "r3" ), 3 )
 
 if __name__ == '__main__':  
     unittest.main()

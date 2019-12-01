@@ -1,11 +1,13 @@
 class WriteBack( object ):
 
-    def __init__( self, aInstructionDecode ):
-        self.mMemToReg = False
-        self.mInstructionDecode = aInstructionDecode 
+    def __init__( self, controlUnit, instructionDecode, execution, memoryAccess ):
+        self.controlUnit = controlUnit
+        self.ID = instructionDecode
+        self.EX = execution
+        self.MEM = memoryAccess
 
-    def execute( self, aALUResult, aReadData ):
-        if self.mMemToReg:
-            self.mInstructionDecode.writeRegister( self.mInstructionDecode.mWriteRegister, aReadData )
+    def execute( self ):
+        if self.controlUnit.MemToReg:
+            self.ID.writeToRegister( self.MEM.readData )
         else:
-            self.mInstructionDecode.writeRegister( self.mInstructionDecode.mWriteRegister, aALUResult )
+            self.ID.writeToRegister( self.EX.ALUResult )

@@ -23,7 +23,7 @@ class ExecutionTestCase( unittest.TestCase ):
 
         execution.execute()
 
-        self.assertEqual( execution.ALUResult, 5 )
+        self.assertEqual( execution.ALUResult, 4 )
 
 if __name__ == '__main__':  
     unittest.main()

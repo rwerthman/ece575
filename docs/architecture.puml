@@ -1,0 +1,56 @@
+@startuml
+
+class CPU
+{
+  init( instructionMemory )
+  cycle()
+}
+
+class ControlUnit
+{
+  RegDst
+  RegWrite
+  ALUSrc
+  ALUOp
+  MemWrite
+  MemRead
+  MemToReg
+}
+
+class InstructionDecode
+{
+  registerFile
+  readRegister1
+  readRegister2
+  immediate
+  writeRegister
+  supportedInstructions
+  execute()
+  readFromRegister( register )
+  writeToRegister( data )
+}
+
+class InstructionFetch
+{
+PC
+instructionMemory
+instruction
+__init__( instructionMemory )
+execute()
+}
+
+class Execution
+class MemoryAccess
+class WriteBack
+
+CPU *-- ControlUnit
+CPU *-- InstructionDecode
+CPU *-- InstructionFetch
+CPU *-- Execution
+CPU *-- MemoryAccess
+CPU *-- WriteBack
+
+InstructionDecode *-- ControlUnit
+InstructionDecode *-- InstructionFetch
+
+@enduml

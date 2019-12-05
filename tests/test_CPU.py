@@ -29,7 +29,7 @@ class CPUTestCase( unittest.TestCase ):
                 "lw", # op
                 "r3", # rs
                 "r1", # rt
-                0 # address
+                0 # immediate
             ]
         ]
 

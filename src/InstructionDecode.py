@@ -14,9 +14,8 @@ class InstructionDecode( object ):
 
         self.readRegister1 = None
         self.readRegister2 = None
-        self.address = None
+        self.immediate = None
         self.writeRegister = None
-        self.writeData = None
 
         self.supportedInstrutions = {
             "add" : "rtype",
@@ -38,7 +37,7 @@ class InstructionDecode( object ):
             self.writeRegister = self.IF.instruction[3] # rd
 
         if instructionType == "itype":
-            self.address = self.IF.instruction[3] # address
+            self.immediate = self.IF.instruction[3] # address
 
 
     def readFromRegister( self, register ):

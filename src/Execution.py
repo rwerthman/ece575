@@ -13,6 +13,6 @@ class Execution( object ):
             if self.controlUnit.ALUSrc == 0:
                 self.ALUResult = self.ID.readFromRegister( self.ID.readRegister1 ) + self.ID.readFromRegister( self.ID.readRegister2 )
             else:
-                self.ALUResult = self.ID.readFromRegister( self.ID.readRegister1 ) + self.ID.address
+                self.ALUResult = self.ID.readFromRegister( self.ID.readRegister1 ) + self.ID.immediate
 
 

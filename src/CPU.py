@@ -17,7 +17,7 @@ class CPU( object ):
         self.WB = WriteBack( self.controlUnit, self.ID, self.EX, self.MEM )
 
     def cycle( self ):
-        for _ in self.instructionMemory:
+        for instruction in self.instructionMemory:
             self.IF.execute()
             self.ID.execute()
             self.EX.execute()

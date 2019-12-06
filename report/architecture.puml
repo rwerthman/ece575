@@ -15,6 +15,8 @@ class ControlUnit
   MemWrite
   MemRead
   MemToReg
+  __init__()
+  setControlSignals( operation )
 }
 
 class InstructionDecode
@@ -40,8 +42,22 @@ execute()
 }
 
 class Execution
+{
+  ALUResult
+  execute()
+}
+
 class MemoryAccess
+{
+  dataMemory
+  readData
+  execute()
+}
+
 class WriteBack
+{
+  execute()
+}
 
 CPU *-- ControlUnit
 CPU *-- InstructionDecode
@@ -52,5 +68,17 @@ CPU *-- WriteBack
 
 InstructionDecode *-- ControlUnit
 InstructionDecode *-- InstructionFetch
+
+Execution *-- ControlUnit
+Execution *-- InstructionDecode
+
+MemoryAccess *-- ControlUnit
+MemoryAccess *-- InstructionDecode
+MemoryAccess *-- Execution
+
+WriteBack *-- ControlUnit
+WriteBack *-- InstructionDecode
+WriteBack *-- Execution
+WriteBack *-- MemoryAccess
 
 @enduml

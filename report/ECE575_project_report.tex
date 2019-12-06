@@ -89,6 +89,13 @@ This stages can be modelled in Python as objects connected to each other.  The r
 
 \section{Architecture}
 
+\begin{figure}
+    \centering
+    \includegraphics[scale=.4]{architecture.png}
+    \caption{Class Diagram of Python Implementation}
+    \label{fig:class_diagram}
+\end{figure}
+
 The Python implementation is made of the 5 pipeline stages mentioned in the introduction.  These are represented as Python classes.  Each of these stages consist of additional components.
 \begin{itemize}
     \item instruction memory
@@ -98,13 +105,21 @@ The Python implementation is made of the 5 pipeline stages mentioned in the intr
     \item a PC (program counter)
     \item a control unit
 \end{itemize}
-All of these components belong to different stages of the pipeline except for the control unit which is used in almost all stages of the pipeline.
+All of these components belong to different stages of the pipeline except for the control unit which is used in almost all stages of the pipeline.  A class diagram of the architecture can be seen in figure \ref{fig:class_diagram}.
 
 \subsection{IF: Instruction Fetch}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.4]{instructionfetch.png}
+    \caption{Instruction Fetch Stage [2]}
+    \label{fig:instructionfetch}
+\end{figure}
 
 The instruction fetch part of the pipeline takes the program counter (PC) and fetches the instruction at the address of the program counter [1, pp. 300].  It increments the program counter to the next address.  These things are done in a class method called execute which is pipeline stage contains
 
 \subsubsection{Instruction Memory}
+
 Instruction memory is represented as a Python list that is passed into the instruction fetch class at initialization.  Each instruction itself is also a Python list.  Depending on the instruction type the list is made up of the opcode, source and destination registers, address/immediate, etc.  An example of an add instruction in python 
 
 \begin{lstlisting}[language=Python]
@@ -129,10 +144,20 @@ instruction = instructionMemory[0]
 \end{lstlisting}
 
 \subsubsection{Program Counter}
+
 The program counter is a python variable that is initialized as 0 and is increment by 1 for every call to execute method of the instruction fetch class.
 
 \subsection{ID: Instruction Decode}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.4]{instructiondecode.png}
+    \caption{Instruction Decode Stage [2]}
+    \label{fig:instructiondecode}
+\end{figure}
+
 In the instruction decode stage of the pipeline the control signals are set in the control unit based on the opcode in the instruction.  The instruction is referenced from the instruction fetch class through a member variable.  The read registers, rs and rt, are stored in the class as well as the write register, and the immediate/address value if one exists.  These come from the instruction from the instruction fetch stage.  Only add, load word (lw), and store word (sw) are supported instructions at this time.  The supported instructions are mapped to their instruction type in a dictionary.
+
 \begin{lstlisting}[language=Python]
 self.supportedInstrutions = {
             "add" : "rtype",
@@ -140,10 +165,12 @@ self.supportedInstrutions = {
             "sw"  : "itype"
         }
 \end{lstlisting}
+
 The instruction type is used to determine if there will be an immediate/address in the instruction or not.  There are 2 methods that are a part of this stage.  They are the readFromRegister and writeToRegister methods simliar to the read data and write data in [1, pp. 301].
 The instruction decode stage has a register file.
 
 \subsubsection{Register File}
+
 The register file is a dictionary with the register has the key and value of the register as the value.
 \begin{lstlisting}[language=Python]
 self.registerFile = {
@@ -154,13 +181,89 @@ self.registerFile = {
 \end{lstlisting}
 Only 3 registers are supported at this time.
 
+\subsubsection{Control Unit}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.4]{controlunit.png}
+    \caption{Datapath Control Unit}
+    \label{fig:controlunit}
+\end{figure}
+
+The control unit is a class that contains just member variables which are the control signals to the pipeline.  The signals are set to their values depending on what the opcode of the instruction is.  The control unit is seen in figure \ref{fig:controlunit}
+
 \subsection{EX: Execution}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.4]{execution.png}
+    \caption{Execution Stage}
+    \label{fig:execution}
+\end{figure}
+
+In the execution state of the pipeline we compute the result of arithmetic between 2 registers, or compute an address to load or store a value in data memory.  The execution stage depends on control signal ALUOp to tell it was arithmetic operation to perform.  It also depends on ALUSrc to tell it what should be the source of the second operand.  The execution statge is figure \ref{fig:execution}  Right now only add is supported but this still allows for an add r-type instruction or the load word or store word i-type instructions.
+
+The result of the arithmetic operation is stored as a class instance member variable that both the Memory Access and Write Back stages will use.
 
 \subsection{MEM: Memory Access}
 
+In the memory access stage you can read or write data to data memory or not do anything if the instruction is an r-type instruction.  This stage is comprised of the data memory and the ability to used an address to read and write data to.
+
+\subsubsection{Data Memory}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=.4]{memoryaccess.png}
+    \caption{Memory Access Stage [2]}
+    \label{fig:memoryaccess}
+\end{figure}
+
+Much like the instruction memory, data memory is represented as a list of integers.
+
+\begin{lstlisting}[language=Python]
+# Data memory
+dataMemory = [1, 2, 3, 4]
+\end{lstlisting}
+
+The ALUResult that comes from the Execution stage is used as an index into the data memory list.  Depending on the values of the control signals MemRead or MemWrite you will be either reading or writing to the data memory.  An if/else statement is used with control signals as the conditions to read or write to data memory.
+
 \subsection{WB: Write Back}
 
-\section{Future Work}
+\begin{figure}
+    \centering
+    \includegraphics[scale=.4]{writeback.png}
+    \caption{Write Back Stage [2]}
+    \label{fig:writeback}
+\end{figure}
+
+The Write Back is the simplest of all of the stage but it is the stage that depends on the most previous stages.  As depicted in [1, pp. 301] this stage has a MUX that is controlled by the MemToReg control signal.  The value of this signal depends on the instruction being executed.  The MUX is represented by an if/else statement with the MemToReg as the if condition.
+
+\begin{lstlisting}[language=Python]
+if controlUnit.MemToReg:
+    ID.writeToRegister( MEM.readData )
+else:
+    ID.writeToRegister( EX.ALUResult )
+\end{lstlisting}
+
+\subsection{CPU}
+The CPU is the main class that creates and contains all of the pipeline stages.  It is the class that contains the initialization of the instruction memory, passes it to the instruction fetch stage, and starts the execution of the pipeline.
+
+The the execution of the stages is done in a method called \textit{cycle}.  For each instruction in instruction memory execute the pipeline stages in order.
+
+\begin{lstlisting}[language=Python]
+for instruction in instructionMemory:
+    IF.execute()
+    ID.execute()
+    EX.execute()
+    MEM.execute()
+    WB.execute()
+\end{lstlisting}
+
+\section{Testing and Verification}
+Test driven development was used when developing this project.  This means tests were written, the tests failed, and then code was written to make the tests pass.  For each class a python file containing containing tests was created.  These tests were used to verify the behavior of each of the methods of the class.
+The main integration driver were the tests for the CPU.  In those tests I would create a CPU that contained all of the stages, create an instruction memory with one instruction, and have the CPU process the instruction through all of the stages.  At the end I would check to see if a register has the expected value or if the data memory was written in the right location with the expected value 
+
+\section{Open Issues And Future Work}
 
 \begin{thebibliography}{00}
 \bibitem{b1} J. Hennessy and D. Patterson, \textit{Computer Organization And Design: The Hardware/Software Interface}, 5th ed. Waltham, MA: Elsevier, 2014.

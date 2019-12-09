@@ -40,7 +40,7 @@ class CPUTestCase( unittest.TestCase ):
 
     def testCycleStoreWord( self ):
 
-        # $r1 = Memory[$r3 + 0]
+        # $r1 = Memory[$r3 + 2]
         instructionMemory = [
             [
                 "sw", # op
